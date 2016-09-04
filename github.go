@@ -3,10 +3,13 @@ package fakegit
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"sort"
 )
+
+type Error struct {
+	Message string `json:"message"`
+}
 
 type UserInfo struct {
 	Login    string `json:"login"`
@@ -39,11 +42,11 @@ func (r *RepoInfos) Len() int {
 }
 
 func (r *RepoInfos) Less(i, j int) bool {
-	return *r[i].ID < *r[j].ID
+	return (*r)[i].ID < (*r)[j].ID
 }
 
 func (r *RepoInfos) Swap(i, j int) {
-	*r[i], *r[j] = *r[j], *r[i]
+	(*r)[i], (*r)[j] = (*r)[j], (*r)[i]
 }
 
 func JsonProc(body *http.Response, container interface{}) error {
@@ -55,11 +58,13 @@ func JsonProc(body *http.Response, container interface{}) error {
 
 func Exception(resp *http.Response, err error, container interface{}) {
 	if err != nil {
-		log.Fatal(err)
+		Fatal(err)
 	}
-	JsonProc(resp, container)
+	if err = JsonProc(resp, container); err != nil {
+		Fatal(err)
+	}
 	if resp.StatusCode != 200 {
-		log.Fatal(errors.New(container["message"]))
+		Fatal(errors.New(container.(map[string]interface{})["message"].(string)))
 	}
 }
 
@@ -75,7 +80,7 @@ func NewGithubUser(name string) *GithubUser {
 
 func (g *GithubUser) GetIdentity() (string, string) {
 	if g.Email == "" {
-		log.Fatal(GITHUB_USER_ERROR)
+		Fatal(GITHUB_USER_ERROR)
 	}
 	return g.Name, g.Email
 }
@@ -98,7 +103,7 @@ func (g *GithubUser) GetEmail(url string) {
 	Exception(resp, err, repoInfos)
 	sort.Sort(sort.Reverse(repoInfos))
 	for _, repo := range *repoInfos {
-		if g.GetEmailFromRepo(repo[:len(repo)-6]) {
+		if g.GetEmailFromRepo(repo.CommitsURL[:len(repo.CommitsURL)-6]) {
 			break
 		}
 	}

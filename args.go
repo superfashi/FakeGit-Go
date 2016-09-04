@@ -2,7 +2,6 @@ package fakegit
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -23,21 +22,21 @@ func ProcUser(argx []string) (string, string, string, bool) {
 		ind := IndexOf("--user", argx)
 		Pop(ind, &argx)
 		if ind >= len(argx) {
-			log.Fatal(ARGUMENT_ERROR_INVALID)
+			Fatal(ARGUMENT_ERROR_INVALID)
 		}
-		info := Pop(ind, argx)
+		info := Pop(ind, &argx)
 		re, _ := regexp.Compile(`([\w -]+)(<.*@.*>|<>)?`)
-		res := re.Find(info)
-		name = strings.TrimSpace(res[0])
-		email = res[1]
+		res := re.FindStringSubmatch(info)
+		name = strings.TrimSpace(res[1])
+		email = res[2]
 		if name == "" {
-			log.Fatal(ARGUMENT_ERROR_USERNAME)
+			Fatal(ARGUMENT_ERROR_USERNAME)
 		}
 		if email == "" {
-			log.Printf("Finding user %s...", name)
+			fmt.Printf("Finding user %s...\n", name)
 			fake := NewGithubUser(name)
 			name, email = fake.GetIdentity()
-			log.Printf("User found: %s <%s>", name, email)
+			fmt.Printf("User found: %s <%s>\n", name, email)
 		} else {
 			email = email[1 : len(email)-1]
 		}
@@ -51,7 +50,7 @@ func ShowHelp() {
 }
 
 func ProcArgs() (string, string, string, bool) {
-	if len(os.Args < 2) {
+	if len(os.Args) < 2 {
 		ShowHelp()
 	}
 	cliArgs := os.Args[1:]
@@ -60,7 +59,7 @@ func ProcArgs() (string, string, string, bool) {
 	}
 	if IsIn("recover", cliArgs) {
 		NewGitConf(".git/config").Recover()
-		log.Println("Config file reset.")
+		fmt.Println("Config file reset.")
 		os.Exit(0)
 	}
 	return ProcUser(cliArgs)

@@ -1,33 +1,26 @@
 package fakegit
 
 import (
-	"log"
+	"fmt"
 	"os"
-	"os/exec"
 )
 
 type GitConf struct {
-	basePath string
+	baseCommand string
 }
 
 func NewGitConf(path string) *GitConf {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		log.Fatal(GITCONF_FILE_NOT_FOUND)
+		Fatal(GITCONF_FILE_NOT_FOUND)
 	}
-	return &GitConf{basePath: path}
+	return &GitConf{baseCommand: fmt.Sprintf("git config -f %s ", path)}
 }
 
 func (g *GitConf) Change(name, email string) {
-	if err := exec.Command("git", "config", "-f", g.basePath, "user.name", name).Run(); err != nil {
-		log.Fatal(err)
-	}
-	if err := exec.Command("git", "config", "-f", g.basePath, "user.email", email).Run(); err != nil {
-		log.Fatal(err)
-	}
+	RunCommand(g.baseCommand + "user.name " + name)
+	RunCommand(g.baseCommand + "user.email " + email)
 }
 
 func (g *GitConf) Recover() {
-	if err := exec.Command("git", "config", "-f", g.basePath, "--remove-section", "user").Run(); err != nil {
-		log.Fatal(err)
-	}
+	RunCommand(g.baseCommand + "--remove-section user")
 }

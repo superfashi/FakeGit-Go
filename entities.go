@@ -1,5 +1,12 @@
 package fakegit
 
+// #include <stdlib.h>
+import "C"
+import (
+	"fmt"
+	"os"
+)
+
 func IsIn(s string, n []string) bool {
 	for _, k := range n {
 		if s == k {
@@ -19,7 +26,16 @@ func IndexOf(s string, n []string) int {
 }
 
 func Pop(s int, n *[]string) string {
-	ret := *n[s]
-	*n = append(*n[:s], *n[s+1:])
+	ret := (*n)[s]
+	(*n) = append((*n)[:s], (*n)[s+1:]...)
 	return ret
+}
+
+func Fatal(v ...interface{}) {
+	fmt.Println(v...)
+	os.Exit(1)
+}
+
+func RunCommand(argx string) {
+	C.system(C.CString(argx))
 }
