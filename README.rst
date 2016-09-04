@@ -1,6 +1,7 @@
 =======
 FakeGit
 =======
+|rcard|
 
 FakeGit is a great tool to fool yourself and others, it will modify your local git config file, deceive git to recognize the committer as somebody else.
 
@@ -96,3 +97,6 @@ This little project is unlicensed, check `LICENSE <https://github.com/hanbang-wa
 **This project has something to do with others identity, so you may end up becoming an identity thief or harm the reputation of others or anything illegal may happen.**
 
 I do not take any responsibility, as I hope this project will only use for harmless jokes, educational or research purpose.
+
+.. |rcard| image:: https://goreportcard.com/badge/github.com/hanbang-wang/FakeGit-Go
+    :target: https://goreportcard.com/report/github.com/hanbang-wang/FakeGit-Go
