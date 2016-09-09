@@ -16,7 +16,7 @@ func MakeC(argx []string) []string {
 	return argx
 }
 
-func ProcUser(argx []string) (string, string, string, bool) {
+func ProcUser(argx []string) ([]string, string, string, bool) {
 	var name, email string
 	if IsIn("--user", argx) {
 		ind := IndexOf("--user", argx)
@@ -41,7 +41,7 @@ func ProcUser(argx []string) (string, string, string, bool) {
 			email = email[1 : len(email)-1]
 		}
 	}
-	return strings.Join(MakeC(argx), " "), name, email, IsIn("change", argx)
+	return MakeC(argx), name, email, IsIn("change", argx)
 }
 
 func ShowHelp() {
@@ -49,7 +49,7 @@ func ShowHelp() {
 	os.Exit(0)
 }
 
-func ProcArgs() (string, string, string, bool) {
+func ProcArgs() ([]string, string, string, bool) {
 	if len(os.Args) < 2 {
 		ShowHelp()
 	}

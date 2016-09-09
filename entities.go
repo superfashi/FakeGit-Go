@@ -1,10 +1,9 @@
 package fakegit
 
-// #include <stdlib.h>
-import "C"
 import (
 	"fmt"
 	"os"
+	"os/exec"
 )
 
 func IsIn(s string, n []string) bool {
@@ -36,6 +35,10 @@ func Fatal(v ...interface{}) {
 	os.Exit(1)
 }
 
-func RunCommand(argx string) {
-	C.system(C.CString(argx))
+func RunCommand(argx []string) {
+	cmd := exec.Command(argx[0], argx[1:]...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	cmd.Run()
 }

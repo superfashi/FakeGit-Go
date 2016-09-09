@@ -1,9 +1,6 @@
 package main
 
-import (
-	"github.com/hanbang-wang/FakeGit-Go"
-	"fmt"
-)
+import "github.com/hanbang-wang/FakeGit-Go"
 
 func main() {
 	addition, name, email, forever := fakegit.ProcArgs()
@@ -15,8 +12,7 @@ func main() {
 		cfg.Change(name, email)
 	}
 	if !forever {
-		fmt.Println("git " + addition)
-		fakegit.RunCommand("git " + addition)
+		fakegit.RunCommand(append([]string{"git"}, addition...))
 		if name != "" {
 			cfg.Recover()
 		}
