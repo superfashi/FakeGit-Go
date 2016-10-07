@@ -7,15 +7,6 @@ import (
 	"strings"
 )
 
-func MakeC(argx []string) []string {
-	for i := range argx {
-		if strings.Count(argx[i], " ") > 0 {
-			argx[i] = fmt.Sprintf("%#v", argx[i])
-		}
-	}
-	return argx
-}
-
 func ProcUser(argx []string) ([]string, string, string, bool) {
 	var name, email string
 	if IsIn("--user", argx) {
@@ -41,7 +32,7 @@ func ProcUser(argx []string) ([]string, string, string, bool) {
 			email = email[1 : len(email)-1]
 		}
 	}
-	return MakeC(argx), name, email, IsIn("change", argx)
+	return argx, name, email, IsIn("change", argx)
 }
 
 func ShowHelp() {
